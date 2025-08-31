@@ -64,6 +64,12 @@ fastify.get('/temperature/:sensorId', async (request, reply) => {
   return buildTemperatureResponse({ location, sensorId });
 });
 
+fastify.get('/temperature/v2', async (request, reply) => {
+  const { deviceId } = request.params;
+  const value = generateRandomTemperature();
+  return { value, unit: "°C", timestamp: new Date().toISOString(), status: "ok", sensor_id: deviceId, sensor_type: "thermometer", description: "temperature" };
+});
+
 
 const start = async () => {
   try {

@@ -23,7 +23,27 @@ app.post('/devices', async (request, reply) => {
   }
   const id = randomUUID();
   const status = 'ONLINE';
-  await db.execute(sql`INSERT INTO devices (id, user_id, device_id, status) VALUES (${id}, ${dbUserId}, ${deviceModelId}, ${status})`);
+  
+  try {
+    await db.execute(sql`INSERT INTO devices (id, user_id, device_id, status) VALUES (${id}, ${dbUserId}, ${deviceModelId}, ${status})`);
+
+    const telemetryId = randomUUID();
+    const tName = 'temperature';
+    const tType = 'sensor';
+    const tLocation = 'Living Room';
+    const tValue = 0;
+    const tUnit = '°C';
+    const tStatus = 'OK';
+    await db.execute(sql`
+      INSERT INTO telemetry (id, device_id, name, type, location, value, unit, status)
+      VALUES (${telemetryId}, ${id}, ${tName}, ${tType}, ${tLocation}, ${tValue}, ${tUnit}, ${tStatus})
+    `);
+  } catch (e) {
+    reply.code(403);
+    console.log(e);
+    return { message: 'background seeding failed' };
+  }
+  
   reply.code(201);
   return { id, deviceId: deviceModelId, status };
 });
@@ -55,27 +75,6 @@ app.post('/devices/:id/command', async (request, reply) => {
   return { status: 'accepted', deviceId: id, command, params: params || {} };
 });
 
-// Telemetry query
-app.get('/telemetry/:deviceId', async (request, reply) => {
-  const { deviceId } = request.params;
-  const { sensorId, from, to } = request.query || {};
-
-  const where = [sql`device_id = ${deviceId}`];
-  if (sensorId) where.push(sql`name = ${sensorId}`);
-  if (from) where.push(sql`last_updated >= ${from}`);
-  if (to) where.push(sql`last_updated <= ${to}`);
-
-  const whereClause = where.length ? sql.join(where, sql` AND `) : sql`1=1`;
-  const result = await db.execute(sql`
-    SELECT id, device_id as "deviceId", name, type, location, value, unit, status,
-           last_updated as "lastUpdated", created_at as "createdAt"
-    FROM telemetry
-    WHERE ${whereClause}
-    ORDER BY last_updated DESC
-  `);
-  return result.rows ?? [];
-});
-
 app.get('/admin/device-models', async (request, reply) => {
   const result = await db.execute(sql`SELECT id, name, manufacturer, model, protocol, created_at as "createdAt" FROM device_models ORDER BY created_at DESC`);
   return result.rows ?? [];
@@ -89,6 +88,7 @@ app.post('/admin/device-models', async (request, reply) => {
     return { message: 'name, manufacturer, model, protocol are required' };
   }
   await db.execute(sql`INSERT INTO device_models (id, name, manufacturer, model, protocol) VALUES (${id}, ${name}, ${manufacturer}, ${model}, ${protocol})`);
+
   reply.code(201);
   return { id, name, manufacturer, model, protocol };
 });
