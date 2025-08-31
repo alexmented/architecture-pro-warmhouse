@@ -1,0 +1,22 @@
+@startuml UserDB
+entity Users {
+    *id: UUID
+    --
+    name: string
+    email: string (unique)
+    password_hash: string
+    created_at: timestamp
+    updated_at: timestamp
+}
+
+entity Sessions {
+    *id: UUID
+    --
+    user_id: UUID [FK -> Users.id]
+    refresh_token: string
+    expires_at: timestamp
+    created_at: timestamp
+}
+
+Users ||--o{ Sessions
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(gateway, "Api Gateway", "Node Js")
+
+System_Boundary(serviceBoundary, "Telemetry Service") {
+    Container(controller, "Telemetry Controller", "Api телеметрии")
+    Container(component, "Telemetry Component", "Управлением телеметрией")
+}
+    Container_Ext(temperatureService, "Temperature Service", "Возвращает данные по температуре")
+    Container_Ext(deviceDb, "DeviceDb", "Telemetry, Devices")
+
+
+Rel(gateway, controller, "HTTP")
+Rel(controller, component, "Uses")
+Rel(component, temperatureService, "HTTP")
+Rel(component, deviceDb, "Чтение/Запись")
+
+
+@enduml

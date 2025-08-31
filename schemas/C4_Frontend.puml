@@ -1,0 +1,112 @@
+@startuml Code Frontend App State
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Web App
+
+' --------------------
+enum DeviceStatus {
+    OFFLINE
+    ONLINE
+}
+
+enum TelemetryStatus {
+    OK
+    ERROR
+}
+
+enum SensorType {
+  temperature
+}
+
+' --------------------
+struct UserCredentials {
+    email: string
+    password: string
+}
+
+struct User {
+    id: string
+    name: string;
+    email: string
+}
+
+struct Device {
+    id: string
+    modelId: string
+    status: DeviceStatus
+}
+
+struct Telemetry {
+    id: string
+    deviceId: string
+    name: string
+    type: SensorType
+    location: string
+    value: number
+    unit: string
+    status: TelemetryStatus
+    lastUpdated: Date
+    createdAt: Date
+}
+
+' --------------------
+class UserStore {
+    -accessToken: string
+    -refreshToken: string
+    -user: User
+
+    +login(credentials: UserCredentials): void
+    +logout(): void
+    +register(email: string, password: string): void
+    +refresh(): void
+}
+
+class DevicesStore {
+    -devices: Device[]
+
+    +fetch(): Device[]
+}
+
+class DeviceStore {
+    -id: string
+    -model: string
+    -status: DeviceStatus
+
+    +fetch(deviceId: string): Device
+    +register(modelCode: string): Device
+    +sendCommand(command: string, params: Map<string,any>): void
+}
+
+class TelemetryStore {
+    -records: Telemetry[]
+
+    +fetch(deviceId: string, from?: Date, to?: Date, sensorId?: string): Telemetry[]
+}
+
+class GlobalStore {
+    -userStore: UserStore
+    -devicesStore: DevicesStore
+    -deviceStore: DeviceStore
+    -telemetryStore: TelemetryStore
+}
+
+
+' --------------------
+UserStore --> User: has >
+UserStore --> UserCredentials: использует для аутентификации >
+
+DevicesStore --> Device: has >
+DeviceStore --> Device: has >
+Device --> DeviceStatus
+
+TelemetryStore --> Telemetry: has >
+Telemetry --> TelemetryStatus
+Telemetry --> SensorType
+
+
+GlobalStore --> UserStore: has >
+GlobalStore --> DeviceStore: has >
+GlobalStore --> DevicesStore: has >
+GlobalStore --> TelemetryStore: has >
+
+@enduml
