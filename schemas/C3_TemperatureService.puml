@@ -4,12 +4,14 @@
 Container(telemetryService, "telemetryService", "Telemetry Service")
 
 System_Boundary(serviceBoundary, "Temperature Service") {
-    Container(controller, "Temperature Controller")
+    Container(controller, "Temperature Controller", "Temperature Api")
     Container(component, "Temperature Component", "Обрабатывает логику температуры")
 }
+    Container_Ext(deviceAdapter, "Device Adapter Service", "Обрабатывает комманды")
+
 
 Rel(telemetryService, controller, "HTTP")
 Rel(controller, component, "Uses")
-
+Rel(component, deviceAdapter, "HTTP")
 
 @enduml

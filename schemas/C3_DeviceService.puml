@@ -5,13 +5,14 @@ Container(gateway, "Api Gateway", "Node Js")
 
 
 System_Boundary(serviceBoundary, "Device Service") {
-    Container(manageDeviceController, "Manage Device Controller", "Управление существующим устройством")
-    Container(connectDeviceController, "Connect Device Controller", "Подключение/Отключение устройства пользователем")
-    Container(newDeviceController, "New Device Controller", "Добавление интеграции с устройством админом")
+    Container(manageDeviceController, "Manage Device Controller", "Api")
+    Container(connectDeviceController, "Connect Device Controller", "Api")
+    Container(newDeviceController, "New Device Controller", "Api")
 
 
-    Container(runCommandComponent, "Run Command Component", "Запуск для устройства по протоколу")
     Container(defineDeviceComponent, "Define Device Component", "Определеить устройство и возможные команды")
+    Container(manageDeviceComponent, "Manage Device Component", "Управление устройством пользователя")
+    Container(connectDeviceComponent, "Connect Device Component", "Подключение/Отключение устройства пользователя")
 }
     Container_Ext(adapterDevice, "Device Adapter", "Работает с коммандами девайса")
     Container_Ext(db, "DeviceDB", "Хранит информацию о девайсах")
@@ -21,11 +22,13 @@ Rel(gateway, manageDeviceController, "HTTP")
 Rel(gateway, connectDeviceController, "HTTP")
 Rel(manageDeviceController, defineDeviceComponent, "Uses")
 Rel(connectDeviceController, defineDeviceComponent, "Uses")
-Rel(defineDeviceComponent, runCommandComponent, "Uses")
-Rel(defineDeviceComponent, db, "Read")
-Rel(runCommandComponent, adapterDevice, "HTTP/Zigbee/MQTT")
+Rel(defineDeviceComponent, manageDeviceComponent, "Uses")
+Rel(defineDeviceComponent, connectDeviceComponent, "Uses")
+Rel(manageDeviceComponent, adapterDevice, "HTTP")
+Rel(manageDeviceComponent, db, "Read/WRite")
+Rel(connectDeviceComponent, db, "Read/WRite")
 Rel(gateway, newDeviceController, "HTTP")
-Rel(newDeviceController, db, "Write")
+Rel(newDeviceController, db, "Write/Read")
 
 
 

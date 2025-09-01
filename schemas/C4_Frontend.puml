@@ -32,7 +32,9 @@ struct User {
 
 struct Device {
     id: string
-    modelId: string
+    manufacturer: string
+    model: string
+    protocol: string
     status: DeviceStatus
 }
 
@@ -70,6 +72,8 @@ class DevicesStore {
 class DeviceStore {
     -id: string
     -model: string
+    - manufacturer: string
+    - protocol: string
     -status: DeviceStatus
 
     +fetch(deviceId: string): Device

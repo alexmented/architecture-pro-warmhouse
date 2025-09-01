@@ -6,8 +6,8 @@ Person(installer, "Специалист по установке")
 
 
 System(heating_system, "Умный дом", "Монолитное приложение на Go с PostgresSQL")
-System_Ext(heating_device, "Система отопления", "Отапливает")
-System_Ext(sensors, "Датчики температуры", "Показывает температуру и отслеживают")
+System_Ext(heating_device, "Система отопления", "Выполняет отопительную функцию")
+System_Ext(sensors, "Датчики температуры", "Отслеживание температуры")
 
 Rel(user, heating_system, "Управление умным домом")
 Rel(installer, heating_system, "Подключает к умному дому", "Регистрирует датчики в системе")

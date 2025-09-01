@@ -14,7 +14,7 @@ System_Boundary(serviceBoundary, "Telemetry Service") {
 Rel(gateway, controller, "HTTP")
 Rel(controller, component, "Uses")
 Rel(component, temperatureService, "HTTP")
-Rel(component, deviceDb, "Чтение/Запись")
+Rel(component, deviceDb, "Чтение")
 
 
 @enduml

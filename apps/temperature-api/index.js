@@ -66,7 +66,7 @@ fastify.get('/temperature/:sensorId', async (request, reply) => {
 
 fastify.get('/temperature/v2', async (request, reply) => {
   const { deviceId } = request.params;
-  const value = generateRandomTemperature();
+  const value = generateRandomTemperature(); // send commands to device adapter
   return { value, unit: "°C", timestamp: new Date().toISOString(), status: "ok", sensor_id: deviceId, sensor_type: "thermometer", description: "temperature" };
 });
 

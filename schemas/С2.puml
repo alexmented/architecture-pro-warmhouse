@@ -10,7 +10,7 @@ System_Boundary(app, "Warm House") {
     Container(gateway, "Api Gateway", "Node js")
 
 System_Boundary(userBoundary, "User Interaction Domain") {
-    Container(userService, "User Service", "REST API", "Управление пользователем")
+    Container(userService, "User Service", "REST API", "Управление пользователем и аутентификацией")
     ContainerDb(userDb, "UserDB", "PostgreSQL", "Users")
 
 }
@@ -40,8 +40,8 @@ Rel(deviceService, deviceDb, "Чтение/Запись")
 
 Rel(deviceService, adapterService, "Передача команд", "HTTP")
 Rel(adapterService, device, "Выполнение команд", "MQTT/HTTP/Zigbee")
-Rel(telemetryService, adapterService, "Запуск команды телеметрии", "HTTP")
-Rel(telemetryService, deviceDb, "Чтение/Запись")
+Rel(temperatureService, adapterService, "Получение температуры", "HTTP")
+Rel(telemetryService, deviceDb, "Чтение")
 Rel(appFrontend, gateway, "HTTP")
 Rel(gateway, deviceService, "Работа с устройствами", "HTTP")
 Rel(gateway, telemetryService, "Получить телеметрию", "HTTP")

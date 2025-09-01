@@ -1,7 +1,7 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Container(telemetryService, "Telemetry Service", "Сервис телемеетрии")
+Container(temperatureService, "Temperature Service", "Работа с температурой")
 Container(deviceService, "Device Service","Управление девайсами")
 
 System_Boundary(serviceBoundary, "Device Adapter Service") {
@@ -12,7 +12,7 @@ System_Boundary(serviceBoundary, "Device Adapter Service") {
 
 
 
-Rel(telemetryService, adapterController, "HTTP")
+Rel(temperatureService, adapterController, "HTTP")
 Rel(deviceService, adapterController, "HTTP")
 Rel(adapterController, executeComponent, "Uses")
 Rel(executeComponent, smartDevice, "MQTT/HTTP/Zigbee")
