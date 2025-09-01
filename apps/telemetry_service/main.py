@@ -1,10 +1,12 @@
 import os
 import asyncio
+import uuid
 from typing import Any, Dict, List
 
 from fastapi import FastAPI, HTTPException
 import httpx
 import asyncpg
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="Telemetry Service", version="0.3.0")
 
@@ -79,6 +81,45 @@ async def get_telemetry(device_id: str) -> Dict[str, Any]:
                **rows[0],
                "value": external_value
            }
+
+
+class TelemetryCreate(BaseModel):
+    deviceId: str = Field(..., alias="deviceId")
+    name: str
+    type: str
+    location: str
+    value: float
+    unit: str
+    status: str
+
+
+@app.post("/telemetry")
+async def create_telemetry(payload: TelemetryCreate) -> Dict[str, Any]:
+    pool = getattr(app.state, "pool", None)
+    if not pool:
+        raise HTTPException(status_code=500, detail="db_not_available")
+    sql = (
+        "INSERT INTO telemetry (id, device_id, name, type, location, value, unit, status) "
+        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8) "
+        'RETURNING id, device_id as "deviceId", name, type, location, value, unit, status, created_at as "createdAt"'
+    )
+    try:
+        async with pool.acquire() as conn:
+            new_id = str(uuid.uuid4())
+            row = await conn.fetchrow(
+                sql,
+                new_id,
+                payload.deviceId,
+                payload.name,
+                payload.type,
+                payload.location,
+                payload.value,
+                payload.unit,
+                payload.status,
+            )
+            return dict(row)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"db_insert_error: {e}")
 
 
 if __name__ == "__main__":

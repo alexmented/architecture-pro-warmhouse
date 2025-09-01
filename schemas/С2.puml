@@ -37,7 +37,7 @@ System_Ext(device, "Smart Device", "IoT устройство (лампа, дат
 Rel(user, appFrontend, "Использует")
 
 Rel(deviceService, deviceDb, "Чтение/Запись")
-
+Rel(deviceService, telemetryService, "Записать данные о сенсорах", "HTTP")
 Rel(deviceService, adapterService, "Передача команд", "HTTP")
 Rel(adapterService, device, "Выполнение команд", "MQTT/HTTP/Zigbee")
 Rel(temperatureService, adapterService, "Получение температуры", "HTTP")

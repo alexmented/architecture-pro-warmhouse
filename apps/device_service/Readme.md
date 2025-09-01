@@ -21,7 +21,7 @@ curl -X POST http://localhost:8083/admin/device-models \
 curl -X POST http://localhost:8083/devices \
   -H 'Content-Type: application/json' \
   -d '{
-    "deviceId": "550e8400-e29b-41d4-a716-446655440000"
+    "deviceId": "5c5aa8d7-fed6-4428-ac40-7347971b612"
   }'
 ```
 
@@ -37,7 +37,7 @@ curl -X POST http://localhost:8083/devices/123e4567-e89b-12d3-a456-426614174000/
   }'
 ```
 
-### Получить список устройств
+### Получить телеметрию
 ```bash
-curl http://localhost:8083/devices
+curl http://localhost:8082/telemetry/26c57331-5824-47e2-a6d9-67b1ccecac6
 ```

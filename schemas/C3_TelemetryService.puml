@@ -9,12 +9,12 @@ System_Boundary(serviceBoundary, "Telemetry Service") {
 }
     Container_Ext(temperatureService, "Temperature Service", "Возвращает данные по температуре")
     Container_Ext(deviceDb, "DeviceDb", "Telemetry, Devices")
-
+    Container_Ext(deviceService, "Dervice Service", "Сервис взаимодействия с устройствами")
 
 Rel(gateway, controller, "HTTP")
 Rel(controller, component, "Uses")
 Rel(component, temperatureService, "HTTP")
 Rel(component, deviceDb, "Чтение")
-
+Rel(deviceService, controller, "Чтение")
 
 @enduml

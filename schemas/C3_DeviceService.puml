@@ -16,12 +16,15 @@ System_Boundary(serviceBoundary, "Device Service") {
 }
     Container_Ext(adapterDevice, "Device Adapter", "Работает с коммандами девайса")
     Container_Ext(db, "DeviceDB", "Хранит информацию о девайсах")
+    Container_Ext(telemetryService, "Telemetry Service", "Сервис телеметрии")
+
 
 
 Rel(gateway, manageDeviceController, "HTTP")
 Rel(gateway, connectDeviceController, "HTTP")
 Rel(manageDeviceController, defineDeviceComponent, "Uses")
 Rel(connectDeviceController, defineDeviceComponent, "Uses")
+Rel(connectDeviceController, telemetryService, "HTTP")
 Rel(defineDeviceComponent, manageDeviceComponent, "Uses")
 Rel(defineDeviceComponent, connectDeviceComponent, "Uses")
 Rel(manageDeviceComponent, adapterDevice, "HTTP")

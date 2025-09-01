@@ -27,17 +27,25 @@ app.post('/devices', async (request, reply) => {
   try {
     await db.execute(sql`INSERT INTO devices (id, user_id, device_id, status) VALUES (${id}, ${dbUserId}, ${deviceModelId}, ${status})`);
 
-    const telemetryId = randomUUID();
-    const tName = 'temperature';
-    const tType = 'sensor';
-    const tLocation = 'Living Room';
-    const tValue = 0;
-    const tUnit = '°C';
-    const tStatus = 'OK';
-    await db.execute(sql`
-      INSERT INTO telemetry (id, device_id, name, type, location, value, unit, status)
-      VALUES (${telemetryId}, ${id}, ${tName}, ${tType}, ${tLocation}, ${tValue}, ${tUnit}, ${tStatus})
-    `);
+    // Send initial telemetry via telemetry-service
+    const payload = {
+      deviceId: id,
+      name: 'temperature',
+      type: 'sensor',
+      location: 'Living Room',
+      value: 0,
+      unit: '°C',
+      status: 'OK',
+    };
+    const resp = await fetch('http://telemetry-service:8082/telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(`telemetry-service error: ${resp.status} ${text}`);
+    }
   } catch (e) {
     reply.code(403);
     console.log(e);
