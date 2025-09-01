@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Пользователь")
+Person(installer, "Специалист по установке")
+
+
+System(heating_system, "Умный дом", "Монолитное приложение на Go с PostgresSQL")
+System_Ext(heating_device, "Система отопления", "Выполняет отопительную функцию")
+System_Ext(sensors, "Датчики температуры", "Отслеживание температуры")
+
+Rel(user, heating_system, "Управление умным домом")
+Rel(installer, heating_system, "Подключает к умному дому", "Регистрирует датчики в системе")
+Rel(heating_system, heating_device, "Управляет", "Синхронно")
+Rel(heating_system, sensors, "Запрашивает данные", "Синхронно")
+
+@enduml

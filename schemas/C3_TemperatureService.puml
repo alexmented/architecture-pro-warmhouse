@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(telemetryService, "telemetryService", "Telemetry Service")
+
+System_Boundary(serviceBoundary, "Temperature Service") {
+    Container(controller, "Temperature Controller", "Temperature Api")
+    Container(component, "Temperature Component", "Обрабатывает логику температуры")
+}
+    Container_Ext(deviceAdapter, "Device Adapter Service", "Обрабатывает комманды")
+
+
+Rel(telemetryService, controller, "HTTP")
+Rel(controller, component, "Uses")
+Rel(component, deviceAdapter, "HTTP")
+
+@enduml

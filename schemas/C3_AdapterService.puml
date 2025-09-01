@@ -1,0 +1,21 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(temperatureService, "Temperature Service", "Работа с температурой")
+Container(deviceService, "Device Service","Управление девайсами")
+
+System_Boundary(serviceBoundary, "Device Adapter Service") {
+    Container(adapterController, "Adapter Device Controller", "Api для сервиса")
+    Container(executeComponent, "Execute Component", "Выполнение комманды")
+}
+    Container_Ext(smartDevice, "Smart Device", "IoT устройство")
+
+
+
+Rel(temperatureService, adapterController, "HTTP")
+Rel(deviceService, adapterController, "HTTP")
+Rel(adapterController, executeComponent, "Uses")
+Rel(executeComponent, smartDevice, "MQTT/HTTP/Zigbee")
+
+
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "Пользователь приложения")
+Person(admin, "Admin", "Администратор, добавляющий устройства для интеграции")
+
+
+System_Boundary(app, "Warm House") {
+    Container(appFrontend, "Frontend (Web/Mobile)", "React", "UI для управления пользователями и устройствами")
+    Container(gateway, "Api Gateway", "Node js")
+
+System_Boundary(userBoundary, "User Interaction Domain") {
+    Container(userService, "User Service", "REST API", "Управление пользователем и аутентификацией")
+    ContainerDb(userDb, "UserDB", "PostgreSQL", "Users")
+
+}
+
+System_Boundary(smartHome, "Smart Home System") {
+
+    Container(deviceService, "Device Service", "REST API", "Регистрация устройств, хранение моделей и экземпляров, маршрутизация команд")
+    ContainerDb(deviceDb, "DeviceDB", "PostgreSQL", "DeviceModels, Devices, Telemetry")
+
+    Container(adapterService, "Device Adapter Service", "REST API + Protocol Drivers", "Адаптеры к протоколам (MQTT/HTTP/Zigbee)")
+
+
+    Container(telemetryService, "Telemetry Service", "REST API", "Сбор и хранение телеметрии (встроенное хранилище)")
+    Container(temperatureService, "Temperature Service", "REST API", "Получение данных о температуре")
+
+}
+
+}
+
+
+
+System_Ext(device, "Smart Device", "IoT устройство (лампа, датчик)")
+
+Rel(user, appFrontend, "Использует")
+
+Rel(deviceService, deviceDb, "Чтение/Запись")
+Rel(deviceService, telemetryService, "Записать данные о сенсорах", "HTTP")
+Rel(deviceService, adapterService, "Передача команд", "HTTP")
+Rel(adapterService, device, "Выполнение команд", "MQTT/HTTP/Zigbee")
+Rel(temperatureService, adapterService, "Получение температуры", "HTTP")
+Rel(telemetryService, deviceDb, "Чтение")
+Rel(appFrontend, gateway, "HTTP")
+Rel(gateway, deviceService, "Работа с устройствами", "HTTP")
+Rel(gateway, telemetryService, "Получить телеметрию", "HTTP")
+Rel(gateway, userService, "Работа с данными юзера", "HTTP")
+
+Rel(userService, userDb, "Чтение/Запись")
+Rel(telemetryService, temperatureService, "Получение температуры", "HTTP")
+Rel(admin, gateway, "HTTP")
+
+
+@enduml

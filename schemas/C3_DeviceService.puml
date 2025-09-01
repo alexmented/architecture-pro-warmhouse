@@ -1,0 +1,38 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Container(gateway, "Api Gateway", "Node Js")
+
+
+System_Boundary(serviceBoundary, "Device Service") {
+    Container(manageDeviceController, "Manage Device Controller", "Api")
+    Container(connectDeviceController, "Connect Device Controller", "Api")
+    Container(newDeviceController, "New Device Controller", "Api")
+
+
+    Container(defineDeviceComponent, "Define Device Component", "Определеить устройство и возможные команды")
+    Container(manageDeviceComponent, "Manage Device Component", "Управление устройством пользователя")
+    Container(connectDeviceComponent, "Connect Device Component", "Подключение/Отключение устройства пользователя")
+}
+    Container_Ext(adapterDevice, "Device Adapter", "Работает с коммандами девайса")
+    Container_Ext(db, "DeviceDB", "Хранит информацию о девайсах")
+    Container_Ext(telemetryService, "Telemetry Service", "Сервис телеметрии")
+
+
+
+Rel(gateway, manageDeviceController, "HTTP")
+Rel(gateway, connectDeviceController, "HTTP")
+Rel(manageDeviceController, defineDeviceComponent, "Uses")
+Rel(connectDeviceController, defineDeviceComponent, "Uses")
+Rel(connectDeviceController, telemetryService, "HTTP")
+Rel(defineDeviceComponent, manageDeviceComponent, "Uses")
+Rel(defineDeviceComponent, connectDeviceComponent, "Uses")
+Rel(manageDeviceComponent, adapterDevice, "HTTP")
+Rel(manageDeviceComponent, db, "Read/WRite")
+Rel(connectDeviceComponent, db, "Read/WRite")
+Rel(gateway, newDeviceController, "HTTP")
+Rel(newDeviceController, db, "Write/Read")
+
+
+
+@enduml

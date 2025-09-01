@@ -1,0 +1,37 @@
+@startuml DeviceDB
+entity DeviceModels {
+    *id: UUID
+    --
+    name: string
+    manufacturer: string
+    model: string
+    protocol: string
+    created_at: timestamp
+}
+
+entity Devices {
+    *id: UUID
+    --
+    user_id: UUID [FK -> UserDB.Users.id]
+    device_id: UUID [FK -> DeviceModels.id]
+    status: string
+    created_at: timestamp
+}
+
+entity Telemetry {
+    *id: UUID
+    --
+    device_id: UUID [FK -> Devices.id]
+    name: varchar(100)
+    type: varchar(50)
+    location: varchar(100)
+    value: double
+    unit: varchar(20)
+    status: varchar(20)
+    last_updated: timestamp
+    created_at: timestamp
+}
+
+DeviceModels ||--o{ Devices
+Devices ||--o{ Telemetry
+@enduml
